@@ -4,6 +4,11 @@ const { Telegraf } = require("telegraf");
 const bot = new Telegraf(process.env.TOKEN);
 const ADMIN_TELEGRAM_ID = process.env.ADMIN_TELEGRAM_ID;
 
+bot.catch((err, ctx) => {
+    console.log(`Ooops, encountered an error for ${ctx.updateType}`, err);
+    process.exit(0);
+})
+
 bot.start((ctx) => {
     let fullname = ctx.from.last_name ? `${ctx.from.first_name} ${ctx.from.last_name}`: `${ctx.from.first_name}`;
     let introMessage = `
