@@ -28,7 +28,7 @@ bot.on("message", (ctx) => {
 
     if (isAdmin) {
         // sending to specific message to user by admin
-        if (ctx.update.message.reply_to_message) {
+        if (ctx.update.message.reply_to_message != undefined && ctx.update.message.reply_to_message.forward_from != undefined) {
             let messageAuthorID = ctx.update.message.reply_to_message.forward_from.id;
             let adminMessage = ctx.update.message.text;
             ctx.telegram.sendMessage(messageAuthorID, adminMessage);
