@@ -24,7 +24,7 @@ bot.on("message", (ctx) => {
 
     if (isAdmin) {
         // sending to specific message to user by admin
-        if (ctx.update.message.reply_to_message.text != undefined) {
+        if (ctx.update.message.reply_to_message != undefined && ctx.update.message.reply_to_message.text != undefined) {
             let senderMessage = ctx.update.message.reply_to_message.text;
             let senderID = senderMessage.split(':').shift();
             let adminMessage = ctx.update.message.text;
