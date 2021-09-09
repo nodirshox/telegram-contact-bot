@@ -1,22 +1,19 @@
 require('dotenv').config();
 const { Telegraf } = require("telegraf");
+const { word } = require("./dictionary");
 
 const bot = new Telegraf(process.env.TOKEN);
 const ADMIN_TELEGRAM_ID = process.env.ADMIN_TELEGRAM_ID;
 
 bot.catch((err, ctx) => {
-    console.log(`Ooops, encountered an error for ${ctx.updateType}`, err);
+    console.log(`Error on ${ctx.updateType}`, err);
     process.exit(1);
 })
 
 bot.start((ctx) => {
     let fullname = ctx.from.last_name ? `${ctx.from.first_name} ${ctx.from.last_name}`: `${ctx.from.first_name}`;
-    let introMessage = `
-<b>👋 Assalomu alaykum ${fullname}.</b>\n
-Savolingizni yozing. Tez orada javob beraman.\n
-Rahmat!
-    `;
-    let nometaMessage = "🙏 Iltimos, bitta xabarda barcha xabaringizni yozing.<a href='https://files.nodirbek.uz/Nometa.png'>&#8203;</a>"; 
+    let introMessage = `<b>${word.uz.hello} ${fullname}.</b>\n\n${word.uz.intro}`;
+    let nometaMessage = word.uz.nometa;
     ctx.replyWithHTML(introMessage);
     ctx.replyWithHTML(nometaMessage);
 });
@@ -32,7 +29,7 @@ bot.on("message", (ctx) => {
             let adminMessage = ctx.update.message.text;
             ctx.telegram.sendMessage(messageAuthorID, adminMessage);
         } else {
-            ctx.reply("Xabarni \"reply\" qilishni unitdingiz.");
+            ctx.reply(word.uz.forgetToReply);
         }
     } else {
         // forward message;
@@ -40,12 +37,14 @@ bot.on("message", (ctx) => {
     };
 });
 
-bot.launch({
-    webhook: {
-        domain: process.env.WEBSITE,
-        port: process.env.PORT
+bot.launch(
+    {
+        webhook: {
+            domain: process.env.WEBSITE,
+            port: process.env.PORT
+        }
     }
-});
+);
 
 // Enable graceful stop
 process.once('SIGINT', () => bot.stop('SIGINT'));
