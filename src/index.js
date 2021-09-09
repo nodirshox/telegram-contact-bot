@@ -40,7 +40,12 @@ bot.on("message", (ctx) => {
     };
 });
 
-bot.launch();
+bot.launch({
+    webhook: {
+        domain: process.env.WEBSITE,
+        port: process.env.PORT
+    }
+});
 
 // Enable graceful stop
 process.once('SIGINT', () => bot.stop('SIGINT'));
