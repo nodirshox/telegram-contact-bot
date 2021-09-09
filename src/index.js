@@ -12,8 +12,8 @@ bot.catch((err, ctx) => {
 
 bot.start((ctx) => {
     let fullname = ctx.from.last_name ? `${ctx.from.first_name} ${ctx.from.last_name}`: `${ctx.from.first_name}`;
-    let introMessage = `<b>${word.uz.hello} ${fullname}.</b>\n\n${word.uz.intro}`;
-    let nometaMessage = word.uz.nometa;
+    let introMessage = `<b>${word.hello} ${fullname}.</b>\n\n${word.intro}`;
+    let nometaMessage = word.nometa;
     ctx.replyWithHTML(introMessage);
     ctx.replyWithHTML(nometaMessage);
 });
@@ -24,16 +24,23 @@ bot.on("message", (ctx) => {
 
     if (isAdmin) {
         // sending to specific message to user by admin
-        if (ctx.update.message.reply_to_message != undefined && ctx.update.message.reply_to_message.forward_from != undefined) {
-            let messageAuthorID = ctx.update.message.reply_to_message.forward_from.id;
+        if (ctx.update.message.reply_to_message.text != undefined) {
+            let senderMessage = ctx.update.message.reply_to_message.text;
+            let senderID = senderMessage.split(':').shift();
             let adminMessage = ctx.update.message.text;
-            ctx.telegram.sendMessage(messageAuthorID, adminMessage);
+            ctx.telegram.sendMessage(senderID, adminMessage);
         } else {
-            ctx.reply(word.uz.forgetToReply);
+            ctx.reply(word.forgetToReply);
         }
     } else {
-        // forward message;
-        ctx.telegram.forwardMessage(ADMIN_TELEGRAM_ID, userID, ctx.message.message_id);
+        let senderID = ctx.message.chat.id;
+        let fullname = ctx.from.last_name ? `${ctx.from.first_name} ${ctx.from.last_name}`: `${ctx.from.first_name}`;
+        if (ctx.message.text != undefined) {
+            let message = `${senderID}: [${fullname}](tg://user?id=${senderID})\n\n${ctx.message.text}`;
+            ctx.telegram.sendMessage(ADMIN_TELEGRAM_ID, message, { parse_mode: "MarkdownV2" });
+        } else {
+            ctx.telegram.forwardMessage(ADMIN_TELEGRAM_ID, userID, ctx.message.message_id);
+        }
     };
 });
 
